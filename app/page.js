@@ -1,4 +1,21 @@
+"use client";
+
+import { useState } from "react";
+
 export default function Home() {
+const dispatchNumber = "3368664133";
+
+const [form, setForm] = useState({
+name: "",
+phone: "",
+location: "",
+service: "",
+vehicle: "",
+notes: "",
+});
+
+const [locationStatus, setLocationStatus] = useState("");
+
 const services = [
 {
 icon: "🔑",
@@ -38,6 +55,62 @@ price: "Coming Soon",
 },
 ];
 
+function updateForm(event) {
+const { name, value } = event.target;
+
+setForm((current) => ({
+...current,
+[name]: value,
+}));
+}
+
+function useMyLocation() {
+if (!navigator.geolocation) {
+setLocationStatus("Location services are not supported on this device.");
+return;
+}
+
+setLocationStatus("Getting your location...");
+
+navigator.geolocation.getCurrentPosition(
+(position) => {
+const lat = position.coords.latitude.toFixed(6);
+const lng = position.coords.longitude.toFixed(6);
+
+setForm((current) => ({
+...current,
+location: `${lat}, ${lng}`,
+}));
+
+setLocationStatus("Location added.");
+},
+() => {
+setLocationStatus(
+"We could not get your location. Enter your address manually."
+);
+}
+);
+}
+
+function submitRequest(event) {
+event.preventDefault();
+
+const message = `CAMPANELLA ROADSIDE SERVICE REQUEST
+
+Customer: ${form.name}
+Phone: ${form.phone}
+Location: ${form.location}
+Service Needed: ${form.service}
+Vehicle: ${form.vehicle || "Not provided"}
+Details: ${form.notes || "None"}
+
+Please contact customer to confirm pricing and dispatch.`;
+
+window.location.href = `sms:${dispatchNumber}?body=${encodeURIComponent(
+message
+)}`;
+}
+
 return (
 <main>
 <style>{`
@@ -45,6 +118,7 @@ return (
 --blue: #087cff;
 --blue2: #00b7ff;
 --black: #05070a;
+--dark: #080c12;
 --card: #10151d;
 --white: #ffffff;
 --gray: #9ba6b2;
@@ -60,7 +134,7 @@ margin: auto;
 position: sticky;
 top: 0;
 z-index: 50;
-background: rgba(5,7,10,.94);
+background: rgba(5,7,10,.95);
 backdrop-filter: blur(14px);
 border-bottom: 1px solid var(--line);
 }
@@ -103,8 +177,10 @@ justify-content: center;
 padding: 15px 23px;
 background: linear-gradient(135deg, var(--blue), var(--blue2));
 color: white;
+border: none;
 border-radius: 8px;
 font-weight: 900;
+cursor: pointer;
 box-shadow: 0 0 28px rgba(8,124,255,.25);
 }
 
@@ -114,8 +190,11 @@ align-items: center;
 justify-content: center;
 padding: 14px 23px;
 border: 1px solid rgba(255,255,255,.22);
+background: transparent;
+color: white;
 border-radius: 8px;
 font-weight: 900;
+cursor: pointer;
 }
 
 .hero {
@@ -181,7 +260,7 @@ box-shadow: 0 30px 80px rgba(0,0,0,.5);
 
 .logoBox img {
 width: 100%;
-max-width: 520px;
+max-width: 560px;
 object-fit: contain;
 }
 
@@ -207,7 +286,7 @@ line-height: 1.7;
 }
 
 .services {
-background: #080c12;
+background: var(--dark);
 }
 
 .serviceGrid {
@@ -258,10 +337,120 @@ color: var(--blue2);
 font-weight: 900;
 }
 
-.why {
+.request {
 background:
-radial-gradient(circle at 10% 20%, rgba(8,124,255,.12), transparent 25%),
-var(--black);
+radial-gradient(circle at 80% 20%, rgba(8,124,255,.12), transparent 30%),
+#05070a;
+}
+
+.requestGrid {
+display: grid;
+grid-template-columns: .8fr 1.2fr;
+gap: 55px;
+align-items: start;
+}
+
+.requestInfo h2 {
+font-size: clamp(38px, 5vw, 58px);
+line-height: 1.05;
+margin: 0 0 20px;
+}
+
+.requestInfo p {
+color: var(--gray);
+line-height: 1.7;
+font-size: 17px;
+}
+
+.dispatchNumber {
+font-size: 27px;
+font-weight: 900;
+color: var(--blue2);
+margin: 25px 0;
+}
+
+.formCard {
+background: var(--card);
+border: 1px solid rgba(0,183,255,.22);
+border-radius: 18px;
+padding: 30px;
+}
+
+.formGrid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 16px;
+}
+
+.field {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.full {
+grid-column: 1 / -1;
+}
+
+.field label {
+font-size: 14px;
+font-weight: 800;
+}
+
+.field input,
+.field select,
+.field textarea {
+width: 100%;
+background: #080c12;
+color: white;
+border: 1px solid rgba(255,255,255,.14);
+border-radius: 8px;
+padding: 14px;
+outline: none;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+border-color: var(--blue2);
+}
+
+.field textarea {
+min-height: 120px;
+resize: vertical;
+}
+
+.locationRow {
+display: grid;
+grid-template-columns: 1fr auto;
+gap: 10px;
+}
+
+.locationButton {
+border: 1px solid rgba(0,183,255,.4);
+background: rgba(8,124,255,.12);
+color: white;
+border-radius: 8px;
+padding: 0 16px;
+cursor: pointer;
+font-weight: 800;
+}
+
+.locationStatus {
+color: var(--blue2);
+font-size: 12px;
+margin-top: 5px;
+}
+
+.formNotice {
+color: var(--gray);
+font-size: 12px;
+line-height: 1.6;
+margin-top: 14px;
+}
+
+.why {
+background: var(--dark);
 }
 
 .whyGrid {
@@ -285,24 +474,8 @@ color: var(--gray);
 line-height: 1.6;
 }
 
-.cta {
-text-align: center;
-background: linear-gradient(135deg, #07111e, #05070a);
-}
-
-.cta h2 {
-font-size: clamp(38px, 6vw, 64px);
-margin: 0 0 18px;
-}
-
-.cta p {
-color: var(--gray);
-font-size: 18px;
-margin-bottom: 30px;
-}
-
 .tech {
-background: #080c12;
+background: #05070a;
 }
 
 .techGrid {
@@ -330,10 +503,27 @@ font-weight: 900;
 margin-right: 10px;
 }
 
+.cta {
+text-align: center;
+background: linear-gradient(135deg, #07111e, #05070a);
+}
+
+.cta h2 {
+font-size: clamp(38px, 6vw, 64px);
+margin: 0 0 18px;
+}
+
+.cta p {
+color: var(--gray);
+font-size: 18px;
+margin-bottom: 30px;
+}
+
 footer {
 border-top: 1px solid var(--line);
 padding: 35px 0;
 color: var(--gray);
+background: #05070a;
 }
 
 .footerInner {
@@ -345,6 +535,7 @@ flex-wrap: wrap;
 
 @media (max-width: 900px) {
 .heroGrid,
+.requestGrid,
 .techGrid {
 grid-template-columns: 1fr;
 }
@@ -366,16 +557,29 @@ padding: 85px 0;
 
 @media (max-width: 600px) {
 .serviceGrid,
-.whyGrid {
+.whyGrid,
+.formGrid {
 grid-template-columns: 1fr;
 }
 
+.full {
+grid-column: auto;
+}
+
 .hero h1 {
-font-size: 51px;
+font-size: 49px;
 }
 
 .logoBox {
 min-height: 300px;
+}
+
+.locationRow {
+grid-template-columns: 1fr;
+}
+
+.locationButton {
+padding: 14px;
 }
 }
 `}</style>
@@ -388,8 +592,10 @@ CAMPANELLA <span>ROADSIDE</span>
 
 <nav className="navLinks">
 <a href="#services">Services</a>
+<a href="#request">Request Help</a>
 <a href="#technicians">Technicians</a>
-<a href="tel:3368664133" className="callButton">
+
+<a href={`tel:${dispatchNumber}`} className="callButton">
 Call Now
 </a>
 </nav>
@@ -416,12 +622,12 @@ jump starts, flat tires, fuel emergencies and more.
 </p>
 
 <div className="heroButtons">
-<a href="tel:3368664133" className="primaryButton">
-Call 336-866-4133
+<a href="#request" className="primaryButton">
+Request Roadside Help
 </a>
 
-<a href="#services" className="secondaryButton">
-View Services
+<a href={`tel:${dispatchNumber}`} className="secondaryButton">
+Call Dispatch
 </a>
 </div>
 </div>
@@ -440,9 +646,7 @@ alt="Campanella Roadside Assistance"
 <div className="sectionTitle">
 <div className="eyebrow">OUR SERVICES</div>
 
-<h2>
-Roadside problems handled.
-</h2>
+<h2>Roadside problems handled.</h2>
 
 <p>
 Whether you’re locked out, dealing with a dead battery,
@@ -467,134 +671,79 @@ Roadside is built to get help headed your way.
 </div>
 </section>
 
-<section className="why">
-<div className="container">
-<div className="sectionTitle">
-<div className="eyebrow">WHY CAMPANELLA</div>
+<section className="request" id="request">
+<div className="container requestGrid">
+<div className="requestInfo">
+<div className="eyebrow">REQUEST ROADSIDE HELP</div>
 
-<h2>
-Fast. Reliable. Built for the road.
-</h2>
-</div>
-
-<div className="whyGrid">
-<div className="whyBox">
-<h3>Fast Response</h3>
-<p>
-Dispatch designed to connect drivers with available
-roadside technicians quickly.
-</p>
-</div>
-
-<div className="whyBox">
-<h3>Trusted Technicians</h3>
-<p>
-Building a dependable technician network focused on
-professional roadside service.
-</p>
-</div>
-
-<div className="whyBox">
-<h3>Growing Coverage</h3>
-<p>
-Locally rooted with plans to expand service coverage
-into additional markets.
-</p>
-</div>
-</div>
-</div>
-</section>
-
-<section className="tech" id="technicians">
-<div className="container techGrid">
-<div>
-<div className="eyebrow">
-JOIN THE NETWORK
-</div>
-
-<div className="sectionTitle">
-<h2>
-Become a Campanella Roadside technician.
-</h2>
+<h2>Tell dispatch where you are and what happened.</h2>
 
 <p>
-We’re building a network of independent roadside
-technicians who can receive service opportunities in
-their coverage area.
+Enter the information below and Campanella Roadside will
+receive your service request. A dispatcher can confirm
+availability, pricing and technician arrival information.
 </p>
+
+<div className="dispatchNumber">
+336-866-4133
 </div>
 
-<a
-href="mailto:campanellaroadside@gmail.com"
-className="primaryButton"
+<a href={`tel:${dispatchNumber}`} className="primaryButton">
+Call Dispatch Now
+</a>
+</div>
+
+<form className="formCard" onSubmit={submitRequest}>
+<div className="formGrid">
+<div className="field">
+<label htmlFor="name">Your Name</label>
+
+<input
+id="name"
+name="name"
+type="text"
+value={form.name}
+onChange={updateForm}
+required
+/>
+</div>
+
+<div className="field">
+<label htmlFor="phone">Phone Number</label>
+
+<input
+id="phone"
+name="phone"
+type="tel"
+value={form.phone}
+onChange={updateForm}
+required
+/>
+</div>
+
+<div className="field full">
+<label htmlFor="location">Breakdown Location</label>
+
+<div className="locationRow">
+<input
+id="location"
+name="location"
+type="text"
+placeholder="Address, intersection, parking lot or coordinates"
+value={form.location}
+onChange={updateForm}
+required
+/>
+
+<button
+type="button"
+className="locationButton"
+onClick={useMyLocation}
 >
-Apply to Drive With Us
-</a>
+Use My Location
+</button>
 </div>
 
-<div className="requirements">
-<div className="requirement">
-<span>✓</span> Reliable personal vehicle
-</div>
-
-<div className="requirement">
-<span>✓</span> Valid driver’s license
-</div>
-
-<div className="requirement">
-<span>✓</span> Auto insurance
-</div>
-
-<div className="requirement">
-<span>✓</span> Lockout kit
-</div>
-
-<div className="requirement">
-<span>✓</span> Jack and lug wrench
-</div>
-
-<div className="requirement">
-<span>✓</span> Jump box or jumper cables
-</div>
-
-<div className="requirement">
-<span>✓</span> Smartphone
-</div>
-</div>
-</div>
-</section>
-
-<section className="cta">
-<div className="container">
-<div className="eyebrow">
-CAMPANELLA ROADSIDE ASSISTANCE
-</div>
-
-<h2>
-Stranded? Give us a call.
-</h2>
-
-<p>
-Lockouts • Jump Starts • Tire Changes • Fuel Delivery
-</p>
-
-<a href="tel:3368664133" className="primaryButton">
-Call 336-866-4133
-</a>
-</div>
-</section>
-
-<footer>
-<div className="container footerInner">
-<div>
-© 2026 Campanella Roadside Assistance
-</div>
-
-<div>
-Help When You Need It Most.
-</div>
-</div>
-</footer>
-</main>
-);
-}
+{locationStatus && (
+<div className="locationStatus">
+{
