@@ -870,7 +870,7 @@ opportunities in their coverage area.
 </div>
 
 <a
-href="mailto:campanellaroadside@gmail.com"
+href="/technicians"
 className="primaryButton"
 >
 Apply to Drive With Us
