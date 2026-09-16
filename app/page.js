@@ -746,4 +746,199 @@ Use My Location
 
 {locationStatus && (
 <div className="locationStatus">
-{
+{locationStatus}
+</div>
+)}
+</div>
+
+<div className="field">
+<label htmlFor="service">Service Needed</label>
+
+<select
+id="service"
+name="service"
+value={form.service}
+onChange={updateForm}
+required
+>
+<option value="">Choose service</option>
+<option value="Vehicle Lockout">Vehicle Lockout</option>
+<option value="Jump Start">Jump Start</option>
+<option value="Tire Change">Tire Change</option>
+<option value="Fuel Delivery">Fuel Delivery</option>
+<option value="Battery Assistance">
+Battery Assistance
+</option>
+<option value="Other Roadside Help">
+Other Roadside Help
+</option>
+</select>
+</div>
+
+<div className="field">
+<label htmlFor="vehicle">Vehicle</label>
+
+<input
+id="vehicle"
+name="vehicle"
+type="text"
+placeholder="Year / Make / Model"
+value={form.vehicle}
+onChange={updateForm}
+/>
+</div>
+
+<div className="field full">
+<label htmlFor="notes">What Happened?</label>
+
+<textarea
+id="notes"
+name="notes"
+placeholder="Example: Keys locked inside, rear passenger tire flat, battery dead..."
+value={form.notes}
+onChange={updateForm}
+/>
+</div>
+
+<div className="field full">
+<button type="submit" className="primaryButton">
+Send Request to Dispatch
+</button>
+
+<div className="formNotice">
+Submitting this form opens a prepared text message
+containing your roadside request. Final pricing and
+technician availability are confirmed by dispatch.
+For collisions, injuries, fire or unsafe roadway
+emergencies, call 911.
+</div>
+</div>
+</div>
+</form>
+</div>
+</section>
+
+<section className="why">
+<div className="container">
+<div className="sectionTitle">
+<div className="eyebrow">WHY CAMPANELLA</div>
+
+<h2>Fast. Reliable. Built for the road.</h2>
+</div>
+
+<div className="whyGrid">
+<div className="whyBox">
+<h3>Fast Response</h3>
+<p>
+Dispatch designed to connect drivers with available
+roadside technicians quickly.
+</p>
+</div>
+
+<div className="whyBox">
+<h3>Trusted Technicians</h3>
+<p>
+Building a dependable technician network focused on
+professional roadside service.
+</p>
+</div>
+
+<div className="whyBox">
+<h3>Growing Coverage</h3>
+<p>
+Locally rooted with plans to expand service coverage
+into additional markets.
+</p>
+</div>
+</div>
+</div>
+</section>
+
+<section className="tech" id="technicians">
+<div className="container techGrid">
+<div>
+<div className="eyebrow">JOIN THE NETWORK</div>
+
+<div className="sectionTitle">
+<h2>Become a Campanella Roadside technician.</h2>
+
+<p>
+We’re building a network of independent roadside
+technicians who can receive available service
+opportunities in their coverage area.
+</p>
+</div>
+
+<a
+href="mailto:campanellaroadside@gmail.com"
+className="primaryButton"
+>
+Apply to Drive With Us
+</a>
+</div>
+
+<div className="requirements">
+<div className="requirement">
+<span>✓</span> Reliable personal vehicle
+</div>
+
+<div className="requirement">
+<span>✓</span> Valid driver’s license
+</div>
+
+<div className="requirement">
+<span>✓</span> Auto insurance
+</div>
+
+<div className="requirement">
+<span>✓</span> Lockout kit
+</div>
+
+<div className="requirement">
+<span>✓</span> Jack and lug wrench
+</div>
+
+<div className="requirement">
+<span>✓</span> Jump box or jumper cables
+</div>
+
+<div className="requirement">
+<span>✓</span> Smartphone
+</div>
+</div>
+</div>
+</section>
+
+<section className="cta">
+<div className="container">
+<div className="eyebrow">
+CAMPANELLA ROADSIDE ASSISTANCE
+</div>
+
+<h2>Stranded? We’re ready.</h2>
+
+<p>
+Lockouts • Jump Starts • Tire Changes • Fuel Delivery
+</p>
+
+<div className="heroButtons" style={{ justifyContent: "center" }}>
+<a href="#request" className="primaryButton">
+Request Service
+</a>
+
+<a href={`tel:${dispatchNumber}`} className="secondaryButton">
+Call 336-866-4133
+</a>
+</div>
+</div>
+</section>
+
+<footer>
+<div className="container footerInner">
+<div>© 2026 Campanella Roadside Assistance</div>
+<div>Help When You Need It Most.</div>
+</div>
+</footer>
+</main>
+);
+}
