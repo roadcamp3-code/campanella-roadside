@@ -44,9 +44,13 @@ const { error } = await supabase
 
 if (error) {
 console.error("Provider application error:", error);
+
 setErrorMessage(
-"We could not submit your application. Please try again."
+`${error.message} | Code: ${error.code || "none"} | Details: ${
+error.details || "none"
+}`
 );
+
 setSubmitting(false);
 window.scrollTo({ top: 0, behavior: "smooth" });
 return;
