@@ -1,15 +1,60 @@
 "use client";
 
 import { useState } from "react";
+import { supabase } from "../supabase";
 
 export default function ProvidersPage() {
 const [submitted, setSubmitted] = useState(false);
+const [submitting, setSubmitting] = useState(false);
+const [errorMessage, setErrorMessage] = useState("");
 
-function handleSubmit(e) {
+async function handleSubmit(e) {
 e.preventDefault();
 
-// We will connect this to the provider database/API next.
+setSubmitting(true);
+setSubmitted(false);
+setErrorMessage("");
+
+const form = new FormData(e.currentTarget);
+
+const services = form.getAll("services");
+
+const application = {
+full_name: form.get("fullName"),
+business_name: form.get("businessName") || "",
+phone: form.get("phone"),
+email: form.get("email"),
+city: form.get("city"),
+state: form.get("state"),
+zip: form.get("zip"),
+coverage_radius: form.get("radius"),
+services: services.join(", "),
+equipment: form.get("equipment"),
+availability: form.get("availability"),
+start_date: form.get("startDate"),
+provider_type: form.get("providerType"),
+insured: form.get("insured"),
+experience: form.get("experience") || "",
+status: "Pending",
+};
+
+const { error } = await supabase
+.from("provider_applications")
+.insert([application]);
+
+if (error) {
+console.error("Provider application error:", error);
+setErrorMessage(
+"We could not submit your application. Please try again."
+);
+setSubmitting(false);
+window.scrollTo({ top: 0, behavior: "smooth" });
+return;
+}
+
 setSubmitted(true);
+setSubmitting(false);
+e.currentTarget.reset();
 window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -90,8 +135,8 @@ margin: "0 auto",
 color: "#e2e7eb",
 }}
 >
-Join the Campanella Roadside provider network and receive
-roadside service opportunities in the areas you choose to cover.
+Join the Campanella Roadside provider network and receive roadside
+service opportunities in the areas you choose to cover.
 </p>
 </div>
 </section>
@@ -122,6 +167,22 @@ regarding the next onboarding steps.
 </div>
 )}
 
+{errorMessage && (
+<div
+style={{
+background: "#fff0f0",
+border: "1px solid #e3a1a1",
+padding: "20px",
+borderRadius: "12px",
+marginBottom: "25px",
+color: "#8a1f1f",
+}}
+>
+<strong>Application not submitted.</strong>
+<p style={{ marginBottom: "0" }}>{errorMessage}</p>
+</div>
+)}
+
 <form onSubmit={handleSubmit}>
 {/* CONTACT INFORMATION */}
 <section style={sectionStyle}>
@@ -129,41 +190,22 @@ regarding the next onboarding steps.
 
 <label style={labelStyle}>
 Full Name *
-<input
-required
-name="fullName"
-type="text"
-style={inputStyle}
-/>
+<input required name="fullName" type="text" style={inputStyle} />
 </label>
 
 <label style={labelStyle}>
 Business / Company Name
-<input
-name="businessName"
-type="text"
-style={inputStyle}
-/>
+<input name="businessName" type="text" style={inputStyle} />
 </label>
 
 <label style={labelStyle}>
 Phone Number *
-<input
-required
-name="phone"
-type="tel"
-style={inputStyle}
-/>
+<input required name="phone" type="tel" style={inputStyle} />
 </label>
 
 <label style={labelStyle}>
 Email Address *
-<input
-required
-name="email"
-type="email"
-style={inputStyle}
-/>
+<input required name="email" type="email" style={inputStyle} />
 </label>
 </section>
 
@@ -173,12 +215,7 @@ style={inputStyle}
 
 <label style={labelStyle}>
 City *
-<input
-required
-name="city"
-type="text"
-style={inputStyle}
-/>
+<input required name="city" type="text" style={inputStyle} />
 </label>
 
 <label style={labelStyle}>
@@ -406,19 +443,22 @@ apply.
 
 <button
 type="submit"
+disabled={submitting}
 style={{
 width: "100%",
 border: "none",
 borderRadius: "10px",
 padding: "18px",
-background: "#101820",
+background: submitting ? "#5d646b" : "#101820",
 color: "#ffffff",
 fontWeight: "800",
 fontSize: "18px",
-cursor: "pointer",
+cursor: submitting ? "not-allowed" : "pointer",
 }}
 >
-SUBMIT PROVIDER APPLICATION
+{submitting
+? "SUBMITTING APPLICATION..."
+: "SUBMIT PROVIDER APPLICATION"}
 </button>
 
 <p
