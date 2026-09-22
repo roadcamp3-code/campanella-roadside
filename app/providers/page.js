@@ -15,8 +15,8 @@ setSubmitting(true);
 setSubmitted(false);
 setErrorMessage("");
 
+try {
 const form = new FormData(e.currentTarget);
-
 const services = form.getAll("services");
 
 const application = {
@@ -38,16 +38,19 @@ experience: form.get("experience") || "",
 status: "Pending",
 };
 
-const { error } = await supabase
+const { data, error } = await supabase
 .from("provider_applications")
-.insert([application]);
+.insert([application])
+.select();
 
 if (error) {
-console.error("Provider application error:", error);
+console.error("SUPABASE ERROR:", error);
 
 setErrorMessage(
-`${error.message} | Code: ${error.code || "none"} | Details: ${
-error.details || "none"
+`SUPABASE ERROR: ${error.message || "Unknown error"} | Code: ${
+error.code || "none"
+} | Details: ${error.details || "none"} | Hint: ${
+error.hint || "none"
 }`
 );
 
@@ -56,11 +59,26 @@ window.scrollTo({ top: 0, behavior: "smooth" });
 return;
 }
 
+console.log("APPLICATION SAVED:", data);
+
 setSubmitted(true);
 setSubmitting(false);
 e.currentTarget.reset();
 window.scrollTo({ top: 0, behavior: "smooth" });
+} catch (err) {
+console.error("FULL SUBMISSION ERROR:", err);
+
+setErrorMessage(
+`CONNECTION/APP ERROR: ${
+err?.message || String(err) || "Unknown error"
+}`
+);
+
+setSubmitting(false);
+window.scrollTo({ top: 0, behavior: "smooth" });
 }
+}
+
 
 const inputStyle = {
 width: "100%",
