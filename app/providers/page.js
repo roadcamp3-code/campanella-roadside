@@ -34,7 +34,9 @@ availability: form.get("availability"),
 start_date: form.get("startDate"),
 provider_type: form.get("providerType"),
 insured: form.get("insured"),
-experience: form.get("experience") || "",
+experience: form.get("experience")
+? Number(form.get("experience"))
+: null,
 status: "Pending",
 };
 
